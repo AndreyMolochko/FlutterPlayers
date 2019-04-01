@@ -1,6 +1,5 @@
 import 'fragments_drawer/video_player.dart';
-import 'fragments_drawer/video_player_local.dart';
-import 'fragments_drawer/view_pager.dart';
+import 'fragments_drawer/audio_player.dart';
 import 'package:flutter/material.dart';
 
 class DrawerItem {
@@ -14,7 +13,6 @@ class HomePage extends StatefulWidget {
   final drawerItems = [
     new DrawerItem("Video Player Network", Icons.rss_feed),
     new DrawerItem("Video Player Video", Icons.local_pizza),
-    new DrawerItem("View Pager", Icons.repeat)
   ];
 
   @override
@@ -31,9 +29,7 @@ class HomePageState extends State<HomePage> {
       case 0:
         return new VideoPlayerNetwork();
       case 1:
-        return new LocalVideoPlayerFragment();
-      case 2:
-        return new ViewPagerWorker();
+        return new CustomAudioPlayer();
 
       default:
         return new Text("Error");
@@ -66,9 +62,9 @@ class HomePageState extends State<HomePage> {
         child: new Column(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-                accountName: new Text("John Doe"),
-                accountEmail: new Text("molochko@ma"
-                    "il.ru")),
+                accountName: new Text("Andrey Molochko"),
+                accountEmail: new Text("andrey.molochko2018@gma"
+                    "il.com")),
             new Column(children: drawerOptions)
           ],
         ),
