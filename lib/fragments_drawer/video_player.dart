@@ -16,14 +16,15 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
     Icons.play_arrow,
     color: new Color(0xFFD6D6D6),
   );
-  bool play = false;
-  String _currentVideoTime = "00:00";
-  String _allTimeVideo = "00:43";
+  double _sliderValue=5.0;
+
+  Widget volumeIcon;
 
   @override
   void initState() {
     super.initState();
 
+    volumeIcon = _getSlider();
     _controller = VideoPlayerController.network(
         'https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4')
       ..setLooping(true)
@@ -79,7 +80,7 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
           _getCurrentTimeVideo(),
           _getVideoProgress(),
           _getAllTimeVideo(),
-          _getVolumeIcon(),
+          volumeIcon,
           _getStretchIcon()
         ],
       ),
@@ -112,12 +113,22 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
   }
 
   Widget _getAllTimeVideo() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: Text(
-          TimeWorker.getTimeInUsualFormat(_controller.value.duration.inSeconds),
-          style: new TextStyle(color: colorIconsPlayer)),
-    );
+    if(_controller.value.duration!=null){
+      return Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(
+            TimeWorker.getTimeInUsualFormat(_controller.value.duration.inSeconds),
+            style: new TextStyle(color: colorIconsPlayer)),
+      );
+    }else{
+      return Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: Text(
+            TimeWorker.getTimeInUsualFormat(0),
+            style: new TextStyle(color: colorIconsPlayer)),
+      );
+    }
+
   }
 
   Widget _getVolumeIcon() {
@@ -126,6 +137,7 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
         Icons.volume_up,
         color: colorIconsPlayer,
       ),
+      onPressed: _clickOnVolumeIcon,
     );
   }
 
@@ -137,6 +149,21 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
     ));
   }
 
+  Widget _getSlider(){
+    return Container(
+      width: 80,
+      child: Slider(
+        activeColor: colorIconsPlayer,
+        min: 0.0,
+        max: 5.0,
+        onChanged: (newRating) {
+          print(_sliderValue);
+          setState(() => _sliderValue = newRating);
+        },
+        value: _sliderValue,),
+    );
+  }
+
   void _changeIconPlay() {
     setState(() {
       if (_controller.value.isPlaying) {
@@ -146,6 +173,12 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
         _playVideo = new Icon(Icons.pause, color: colorIconsPlayer);
         _controller.play();
       }
+    });
+  }
+
+  void _clickOnVolumeIcon(){
+    setState(() {
+      volumeIcon = _getSlider();
     });
   }
 }
