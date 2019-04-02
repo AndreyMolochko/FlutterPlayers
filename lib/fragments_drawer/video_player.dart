@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_app/util/time_worker.dart';
 
 class VideoPlayerNetwork extends StatefulWidget {
   @override
@@ -7,7 +8,17 @@ class VideoPlayerNetwork extends StatefulWidget {
 }
 
 class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
+  Color colorBackgroundPlayer = Color(0xFF3E3E3E);
+  Color colorIconsPlayer = Color(0xFFD6D6D6);
+
   VideoPlayerController _controller;
+  Icon _playVideo = new Icon(
+    Icons.play_arrow,
+    color: new Color(0xFFD6D6D6),
+  );
+  bool play = false;
+  String _currentVideoTime = "00:00";
+  String _allTimeVideo = "00:43";
 
   @override
   void initState() {
@@ -35,20 +46,9 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
           VideoProgressIndicator(
             _controller,
             allowScrubbing: false,
-          )
+          ),
+          _getCustomPlayer()
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _controller.value.isPlaying
-                ? _controller.pause()
-                : _controller.play();
-          });
-        },
-        child: Icon(
-          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-        ),
       ),
       drawer: Drawer(
         child: ListView(
@@ -68,5 +68,84 @@ class _VideoPlayerNetworkState extends State<VideoPlayerNetwork> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  Widget _getCustomPlayer() {
+    return Container(
+      color: colorBackgroundPlayer,
+      child: Row(
+        children: <Widget>[
+          _getIconButtonPlay(),
+          _getCurrentTimeVideo(),
+          _getVideoProgress(),
+          _getAllTimeVideo(),
+          _getVolumeIcon(),
+          _getStretchIcon()
+        ],
+      ),
+    );
+  }
+
+  Widget _getIconButtonPlay() {
+    return IconButton(
+      icon: _playVideo,
+      onPressed: _changeIconPlay,
+    );
+  }
+
+  Widget _getCurrentTimeVideo() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Text(
+        TimeWorker.getTimeInUsualFormat(
+            _controller.value.position.inSeconds),
+        style: new TextStyle(color: colorIconsPlayer),
+      ),
+    );
+  }
+
+  Widget _getVideoProgress() {
+    return Text(
+      "Here will progress",
+      style: new TextStyle(color: colorIconsPlayer),
+    );
+  }
+
+  Widget _getAllTimeVideo() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
+      child: Text(
+          TimeWorker.getTimeInUsualFormat(_controller.value.duration.inSeconds),
+          style: new TextStyle(color: colorIconsPlayer)),
+    );
+  }
+
+  Widget _getVolumeIcon() {
+    return IconButton(
+      icon: Icon(
+        Icons.volume_up,
+        color: colorIconsPlayer,
+      ),
+    );
+  }
+
+  Widget _getStretchIcon() {
+    return IconButton(
+        icon: Icon(
+      Icons.zoom_out_map,
+      color: colorIconsPlayer,
+    ));
+  }
+
+  void _changeIconPlay() {
+    setState(() {
+      if (_controller.value.isPlaying) {
+        _playVideo = new Icon(Icons.play_arrow, color: colorIconsPlayer);
+        _controller.pause();
+      } else {
+        _playVideo = new Icon(Icons.pause, color: colorIconsPlayer);
+        _controller.play();
+      }
+    });
   }
 }
